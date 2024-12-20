@@ -1,0 +1,8 @@
+flask
+flask_sqlalchemy
+SQLAlchemy
+flask_marshmallow
+marshmallow-sqlalchemy
+psycopg2-binary
+requests
+logging

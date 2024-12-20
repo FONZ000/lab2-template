@@ -1,20 +1,53 @@
-version: "3"
 services:
-  postgres:
-    image: library/postgres:13
-    container_name: postgres
-    restart: on-failure
+  reservation_service:
+    container_name: reservation_service
+    image: toutanji/second_lab:1.0.0
+    build:
+      context: ./reservation_service
+    ports:
+      - "8070:8070"  # Expose container's port 8070 to the host
+    environment:
+      - DB_URL=postgresql://postgres:123@db:5432/test
+    depends_on:
+      - db
+
+  payment_service:
+    container_name: payment_service
+    image: toutanji/payment_service:1.0.0
+    build:
+      context: ./payment_service
+    ports:
+      - "8060:8060"  # Expose container's port 8080 to the host
+    environment:
+      - DB_URL=postgresql://postgres:123@db:5432/test
+    depends_on:
+      - db
+
+  loyalty_service:
+    container_name: loyalty_service
+    image: toutanji/loyalty_service:1.0.0
+    build:
+      context: ./loyalty_service
+    ports:
+      - "8050:8050"  # Expose container's port 8080 to the host
+    environment:
+      - DB_URL=postgresql://postgres:123@db:5432/test
+    depends_on:
+      - db
+
+  db:
+    container_name: db
+    image: postgres:16
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: "postgres"
-      POSTGRES_DB: postgres
-    volumes:
-      - db-data:/var/lib/postgresql/data
-      - ./postgres/:/docker-entrypoint-initdb.d/
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: test
     ports:
-      - "5432:5432"
+      - "5432:5432"  # Expose database on port 5432
+    volumes:
+      - db_data:/var/lib/postgresql@16/data  # Correct volume path
 
-# TODO добавить сервисы
 
 volumes:
-  db-data:
+  db_data: {}  # Volume definition
+
